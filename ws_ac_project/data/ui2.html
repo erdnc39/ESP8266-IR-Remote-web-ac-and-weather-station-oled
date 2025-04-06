@@ -67,35 +67,30 @@
 <body>
   <nav class="navbar navbar-dark">
     <div class="container">
-      <a class="navbar-brand " href="#">Air Control</a>
+      <a class="navbar-brand " href="#">AC Control</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto w-100">
-          <li class="nav-item text-center">
-            <a class="btn btn-outline-info" href="/ui.html" style="width: 50%; margin: 5px auto;">
-              <i class="fas fa-home"></i> Home
-            </a>
-          </li>
-          <li class="nav-item text-center">
-            <a class="btn btn-outline-info" href="/upload.html" style="width: 50%; margin: 5px auto;">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="btn btn-success" href="/upload.html" style="width: 100%; margin: 5px 0;">
               <i class="fas fa-upload"></i> File Upload
             </a>
           </li>
-          <li class="nav-item text-center">
-            <a class="btn btn-outline-info" href="/settings.html" style="width: 50%; margin: 5px auto;">
-              <i class="fas fa-cog"></i> Settings
+          <li class="nav-item">
+            <a class="btn btn-warning" href="/settings.html" style="width: 100%; margin: 5px 0;">
+              <i class="glyphicon glyphicon-cog"></i> Settings
             </a>
           </li>
-          <li class="nav-item text-center">
-            <a class="btn btn-outline-info" href="/reset" style="width: 50%; margin: 5px auto;">
-              <i class="fas fa-redo"></i> Reset
+          <li class="nav-item">
+            <a class="btn btn-danger" href="/reset" style="width: 100%; margin: 5px 0;">
+              <i class="glyphicon glyphicon-repeat"></i> Reset
             </a>
           </li>
-          <li class="nav-item text-center">
-            <a class="btn btn-outline-info" onclick="window.location.reload(true);" style="width: 50%; margin: 5px auto;">
-              <i class="fas fa-sync"></i> Refresh
+          <li class="nav-item">
+            <a class="btn btn-primary" onclick="window.location.reload(true);" style="width: 100%; margin: 5px 0;">
+              <i class="glyphicon glyphicon-refresh"></i> Refresh
             </a>
           </li>
         </ul>
@@ -135,58 +130,36 @@
                 </div>
               
           </div>
-              <div class="col-6 ">
+              <div class="col-6 " id="air_quality_col">
               <div class="btn-group">
             
               <a class="btn btn-outline-success" >
                 <div class="row">
                   <span class="col-md-12 col-sm-12">Hava Kalitesi</span><br>
-                  <h1><span class="badge bg-success col-md-12 col-sm-12 text-black mt-2" id="air_quality">--</span><br>
-                    <span class="badge bg-success col-md-12 col-sm-12 text-black mt-2" id="quality">--</span>
+                  <h1><span class="badge bg-info col-md-12 col-sm-12 text-black mt-2" id="air_quality">--</span><br>
+                    <span class="badge bg-info col-md-12 col-sm-12 text-black mt-2" id="quality">--</span>
                   </h1>
                 </div>
               </a>
             
           </div>
-        </div> 
-        </div>
-        <div class="panel-heading mt-2">OTOMASYON AYARLARI</div>
+        </div> </div>
         
-          <div class="btn-group gap-4 ">
-        <div class="col-4 mt-2">
-          <a class="btn btn-outline-warning" >
+        <div class="panel-heading mt-2">OTOMASYON AYARLARI</div>
+        <div class="col-6 " id="air_quality_col">
+          <div class="btn-group">
+        
+          <a class="btn btn-outline-success" >
             <div class="row">
-              <span class="col-md-12 col-sm-12">Mode</span><br>
+              <span class="col-md-12 col-sm-12">Mod</span><br>
               <h1>
-                <span class="badge bg-warning col-md-12 col-sm-12 text-black mt-2" id="mode">--</span>
+                <span class="badge bg-info col-md-12 col-sm-12 text-black mt-2" id="mode">--</span>
               </h1>
             </div>
-            
-          </a></div>
-          <div class="col-4 mt-2">
-            <div class="row">
-          <a class="btn btn-outline-warning" >
-            
-            <span class="col-md-12 col-sm-12">Set Temp</span><br>
-            <h1>
-              <span class="badge bg-warning col-md-12 col-sm-12 text-black mt-2" id="roomTemp">--</span>
-            </h1>
-          </a></div>
-          </div>
-          <div class="col-4 mt-2">
-            <div class="row">
-          <a class="btn btn-outline-warning" >
-            
-            <span class="col-md-12 col-sm-12">interval</span><br>
-            <h1>
-              <span class="badge bg-warning col-md-12 col-sm-12 text-black mt-2" id="checkInterval">--</span>
-            </h1>
-          </a></div>
-          </div>
-        </div>
+          </a>
         
-      
-    
+      </div>
+    </div> 
       <div class="panel-heading mt-2">AC Temperature</div>
       
       <div class="btn-group mt-2 ">
@@ -251,21 +224,23 @@
   </script>
     <script>
       // Sayfa yüklendiğinde ayarları çek ve forma uygula
-      async function fetchConfig() {
-        const response = await fetch('/get_config');
-        const data = await response.json();
-         
-            document.getElementById('mode').innerText = data.mode|| '';
-            document.getElementById('roomTemp').innerText = data.roomTemp || '';
-            document.getElementById('checkInterval').innerText = data.checkInterval || '';
-            document.getElementById('nodeIp').innerText = data.nodeIp || '';
-            document.getElementById('apiUrl').innerText = data.apiUrl || '';
-            document.getElementById('command_on').innerText = data.command_on || '';
-            document.getElementById('command_off').innerText = data.command_off || '';
-          } 
-          setInterval(fetchConfig, 5000);
-          window.onload = fetchConfig;
-      
+      window.addEventListener('DOMContentLoaded', () => {
+        fetch('/get_config')
+          .then(res => res.json())
+          .then(data => {
+            
+            document.getElementById('mode').value = data.mode|| '';
+            document.getElementById('roomTemp').value = data.roomTemp || '';
+            document.getElementById('nodeIp').value = data.nodeIp || '';
+            document.getElementById('apiUrl').value = data.apiUrl || '';
+            document.getElementById('command_on').value = data.command_on || '';
+            document.getElementById('command_off').value = data.command_off || '';
+          })
+          .catch(err => {
+            document.getElementById('status').innerText = 'Ayarlar yüklenemedi!';
+            console.error(err);
+          });
+      });
     </script>
 </body>
 </html>

@@ -16,14 +16,14 @@ function updateStatus() {
       state = data;
       if (state["power"] === true) {
         $("#power").text(" ON");
-        $("#power-btn").addClass("btn-info");
-        $("#power-btn").removeClass("btn-default");
+        $("#power-btn").addClass("btn-success");
+        $("#power-btn").removeClass("btn-secondary");
       } else {
         $("#power").text(" OFF");
-        $("#power-btn").addClass("btn-default");
-        $("#power-btn").removeClass("btn-info");
+        $("#power-btn").addClass("btn-secondary");
+        $("#power-btn").removeClass("btn-success");
       }
-      $("#target_temp").text(state["temp"] + " C");
+      $("#target_temp").text(state["temp"] + " °C");
       setModeColor(state["mode"]);
       setFanColor(state["fan"]);
     },

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Otomasyon Ayarları</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+        background-color: #292929;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        padding-top: 5px; /* Navbar ile çakışmayı önler */
+        text-align: center;
+        width: 600px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+       
+    }
+
+    h1 {
+        color: #90caf9;
+    }
+
+    /* Panel Tasarımı */
+    .panel {
+        background: #3a3a3a;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        padding: 50px;
+    }
+
+    .panel-heading {
+        background: #1976d2;
+        color: white;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .panel-body {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .navbar {
+        background-color: #343a40 !important;
+    }
+
+    .navbar-brand, .navbar-nav .nav-link {
+        color: #ffffff !important;
+    }
+  </style>
+</head>
+<body >
+    
+<!-- Navbar -->
+<nav class="navbar navbar-dark">
+    <div class="container">
+      <a class="navbar-brand " href="#">Automation</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto w-100">
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/ui.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/upload.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-upload"></i> File Upload
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/settings.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/reset" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-redo"></i> Reset
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" onclick="window.location.reload(true);" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-sync"></i> Refresh
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-8">
+    <div class="panel mt-2">
+        <div class="panel-heading" style="background: #ff9901;"><i class="fas fa-cogs"></i> Otomasyon Ayarları</div>
+        <div class="panel-body">
+    <form id="configForm">
+      
+      <!-- Yaz / Kış Modu -->
+      <div class="mb-3">
+        <label class="form-label d-block">Mod Seçimi</label>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="mode" id="modeSummer" value="summer" checked>
+          <label class="form-check-label" for="modeSummer">Yaz</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="mode" id="modeWinter" value="winter">
+          <label class="form-check-label" for="modeWinter">Kış</label>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Set Sıcaklık</label>
+        <input type="number" class="form-control" id="roomTemp" step="0.1">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Kontrol Aralığı (dakika)</label>
+        <input type="number" class="form-control" id="checkInterval" min="1" step="1">
+      </div>
+      
+      <div class="mb-3">
+        <label class="form-label">Remote Node IP</label>
+        <input type="text" class="form-control" id="nodeIp">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">API URL</label>
+        <input type="text" class="form-control" id="apiUrl">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Komut Açık</label>
+        <input type="text" class="form-control" id="command_on">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Komut Kapalı</label>
+        <input type="text" class="form-control" id="command_off">
+      </div>
+      <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+    <div id="status" class="mt-3"></div>
+  </div>
+    </div></div>
+  <script>
+    document.getElementById('configForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+
+      const data = {
+  mode: selectedMode,
+  roomTemp: parseFloat(document.getElementById('roomTemp').value),
+  nodeIp: document.getElementById('nodeIp').value,
+  apiUrl: document.getElementById('apiUrl').value,
+  command_on: document.getElementById('command_on').value,
+  command_off: document.getElementById('command_off').value,
+  checkInterval: parseInt(document.getElementById('checkInterval').value)
+};
+
+
+      fetch('/save_config', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      })
+      .then(res => res.text())
+      .then(text => {
+        document.getElementById('status').innerText = 'Ayarlar kaydedildi!';
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = 'Hata oluştu!';
+      });
+    });
+  </script>
+  <script>
+    // Sayfa yüklendiğinde ayarları çek ve forma uygula
+    window.addEventListener('DOMContentLoaded', () => {
+      fetch('/get_config')
+        .then(res => res.json())
+        .then(data => {
+          if (data.mode === 'winter') {
+            document.getElementById('modeWinter').checked = true;
+          } else {
+            document.getElementById('modeSummer').checked = true;
+          }
+  
+          document.getElementById('roomTemp').value = data.roomTemp || '';
+          document.getElementById('checkInterval').value = data.checkInterval || '';
+          document.getElementById('nodeIp').value = data.nodeIp || '';
+          document.getElementById('apiUrl').value = data.apiUrl || '';
+          document.getElementById('command_on').value = data.command_on || '';
+          document.getElementById('command_off').value = data.command_off || '';
+        })
+        .catch(err => {
+          document.getElementById('status').innerText = 'Ayarlar yüklenemedi!';
+          console.error(err);
+        });
+    });
+  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

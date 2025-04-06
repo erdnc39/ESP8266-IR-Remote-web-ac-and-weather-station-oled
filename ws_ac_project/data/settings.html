@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayarlar</title>
+  
+  <!-- Bootstrap 4 ve Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+        background-color: #292929;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        padding-top: 5px; /* Navbar ile çakışmayı önler */
+        text-align: center;
+        width: 600px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+    }
+
+    h1 {
+        color: #90caf9;
+    }
+
+    /* Panel Tasarımı */
+    .panel {
+        background: #3a3a3a;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        padding: 15px;
+    }
+
+    .panel-heading {
+        background: #1976d2;
+        color: white;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .panel-body {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .navbar {
+        background-color: #343a40 !important;
+    }
+
+    .navbar-brand, .navbar-nav .nav-link {
+        color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark">
+    <div class="container">
+      <a class="navbar-brand " href="#">Ayarlar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto w-100">
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/ui.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/upload.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-upload"></i> File Upload
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/settings.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/reset" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-redo"></i> Reset
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" onclick="window.location.reload(true);" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-sync"></i> Refresh
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- İçerik -->
+<div class="container">
+    <h1>Cihaz Ayarları</h1>
+    <div class="panel">
+        <div class="panel-heading" style="background: #ff9901;">Otomasyon Ayarları</div>
+        <div class="panel-body">
+            <a href="/config.html" class="btn btn-warning"><i class="fas fa-cog"></i> Remote Node ve Sıcaklık Ayarla</a>
+        </div>
+    </div>
+    <!-- Wi-Fi Ayarları Bölümü -->
+    <div class="panel">
+        <div class="panel-heading">Wi-Fi Ayarları</div>
+        <div class="panel-body">
+            <a href="/wifi-setup" class="btn btn-primary"><i class="fas fa-wifi"></i> AP-MODE CONFIG</a>
+            <a href="/wifi_config.html" class="btn btn-primary"><i class="fas fa-cog"></i> Wi-Fi Settings</a>
+        </div>
+    </div>
+
+    <!-- Firmware Güncelleme Bölümü -->
+    <div class="panel">
+        <div class="panel-heading" style="background: #388e3c;">Firmware Güncelleme</div>
+        <div class="panel-body">
+            <form action="/update" method="POST" enctype="multipart/form-data">
+                <label for="firmware">Yeni Firmware Dosyası</label>
+                <input type="file" class="form-control-file" id="firmware" name="firmware" accept=".bin">
+                <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Firmware Güncelle</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

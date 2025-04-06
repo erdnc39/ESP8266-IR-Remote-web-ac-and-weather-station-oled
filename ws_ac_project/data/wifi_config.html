@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WiFi Ayarları</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+        background-color: #292929;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        padding-top: 5px; /* Navbar ile çakışmayı önler */
+        text-align: center;
+        width: 600px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+    }
+
+    h1 {
+        color: #90caf9;
+    }
+
+    /* Panel Tasarımı */
+    .panel {
+        background: #3a3a3a;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        padding: 15px;
+    }
+
+    .panel-heading {
+        background: #1976d2;
+        color: white;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .panel-body {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .navbar {
+        background-color: #343a40 !important;
+    }
+
+    .navbar-brand, .navbar-nav .nav-link {
+        color: #ffffff !important;
+    }
+  </style>
+
+</head>
+<body class="bg-dark">
+    <nav class="navbar navbar-dark">
+    <div class="container">
+      <a class="navbar-brand " href="#">Wİ-Fİ Ayarları</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto w-100">
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/ui.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/upload.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-upload"></i> File Upload
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/settings.html" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" href="/reset" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-redo"></i> Reset
+            </a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="btn btn-outline-info" onclick="window.location.reload(true);" style="width: 50%; margin: 5px auto;">
+              <i class="fas fa-sync"></i> Refresh
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+        
+        <div class="container mt-5">
+            <div class="card shadow-lg bg-dark text-white">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3>WiFi Yapılandırma</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/save-wifi" method="POST">
+                       
+
+                        <div class="mb-3">
+                            <label for="ssidInput" class="form-label">SSID</label>
+                            <input type="text" class="form-control" id="ssidInput" name="ssid_manual" placeholder="SSID girin" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">WiFi Şifresi</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Şifre" required>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success w-100">Kaydet ve Bağlan</button>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ssidSelect" class="form-label">Ağ Seçin</label>
+                            <div id="ssidList" class="list-group">
+                                <button type="button" class="list-group-item list-group-item-action disabled">
+                                    Ağlar yükleniyor...
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            fetch('/scan')
+                .then(response => response.json())
+                .then(data => {
+                    let ssidList = document.getElementById('ssidList');
+                    ssidList.innerHTML = '';  // Önce listeyi temizle
+
+                    // Taranan ağları liste olarak ekleyelim
+                    data.forEach(ssid => {
+                        let listItem = document.createElement('button');
+                        listItem.className = 'list-group-item list-group-item-action';
+                        listItem.textContent = ssid;
+                        listItem.onclick = function() {
+                            // SSID'yi input alana aktar
+                            document.getElementById('ssidInput').value = ssid;
+                        };
+                        ssidList.appendChild(listItem);
+                    });
+                });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </div>
+</body>
+</html>

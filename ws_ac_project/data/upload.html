@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LittleFS Dosya Yöneticisi</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #2c2f33;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            width: 600px;
+        }
+
+        h1 {
+            color: #90caf9;
+        }
+
+        .navbar {
+            background-color: #23272a;
+            padding: 10px;
+        }
+
+        .navbar-brand, .navbar a {
+            color: #ffffff !important;
+        }
+
+        .container {
+            max-width: 700px;
+        }
+
+        .card {
+            background-color: #3b3f45;
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+
+        .btn-custom {
+            background-color: #ffae00;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #ff9000;
+        }
+
+        .file-list {
+            background-color: #3b3f45;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #555;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .progress-bar {
+            height: 20px;
+        }
+
+        .disk-info {
+            margin-top: 20px;
+            background-color: #3b3f45;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#"><i class="far fa-folder-open"></i> LittleFS File Browser</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto w-100">
+              <li class="nav-item text-center">
+                <a class="btn btn-outline-info" href="/ui.html" style="width: 50%; margin: 5px auto;">
+                  <i class="fas fa-home"></i> Home
+                </a>
+              </li>
+              <li class="nav-item text-center">
+                <a class="btn btn-outline-info" href="/upload.html" style="width: 50%; margin: 5px auto;">
+                  <i class="fas fa-upload"></i> File Upload
+                </a>
+              </li>
+              <li class="nav-item text-center">
+                <a class="btn btn-outline-info" href="/settings.html" style="width: 50%; margin: 5px auto;">
+                  <i class="fas fa-cog"></i> Settings
+                </a>
+              </li>
+              <li class="nav-item text-center">
+                <a class="btn btn-outline-info" href="/reset" style="width: 50%; margin: 5px auto;">
+                  <i class="fas fa-redo"></i> Reset
+                </a>
+              </li>
+              <li class="nav-item text-center">
+                <a class="btn btn-outline-info" onclick="window.location.reload(true);" style="width: 50%; margin: 5px auto;">
+                  <i class="fas fa-sync"></i> Refresh
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+
+    <div class="container mt-4">
+        <h5>Dosya Yükle</h5>
+        <div class="card">
+        <div class="input-group">
+        <input type="file" id="fileInput" class="form-control">
+        <button class="btn-custom" id="uploadBtn" onclick="uploadFile()"> Yükle  <i class="fas fa-upload"></i> </button>
+        </div>
+        <div class="progress mt-3" style="height: 20px;">
+        <div id="uploadProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div id="uploadStatus" class="mt-2 text-white">Yükleme durumu: 0%</div>
+        </div> 
+            <!-- Bellek Kullanımı Progres Barları -->
+        <h5>Toplam Flash Bellek ve Kullanım</h5>
+        <div class="card">
+            <div>
+                <strong>Sketch Alanı:</strong>
+                <div class="progress mb-3">
+                    <div id="sketchProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p id="sketchSizeText">0 MB / 2 MB</p>
+        
+                <strong>LittleFS Alanı:</strong>
+                <div class="progress mb-3">
+                    <div id="fsProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p id="fsSizeText">0 MB / 1.98 MB</p>
+            </div>
+        </div>
+        <h5>Mevcut Dosyalar</h5>
+        <div class="card">
+        <div id="fileList" >
+        
+            <ul id="fileList" class="list-unstyled"></ul>
+        
+        </div>
+        </div>
+    </div>
+    <script>
+        async function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const progressBar = document.getElementById("uploadProgress");
+        const uploadStatus = document.getElementById("uploadStatus");
+
+        if (fileInput.files.length === 0) {
+            alert("Lütfen bir dosya seçin.");
+            return;
+        }
+
+        uploadBtn.innerHTML = "Yükleniyor...";
+        uploadBtn.disabled = true;
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // XHR ile dosya yüklemesi başlatıyoruz
+        const xhr = new XMLHttpRequest();
+        
+        // Yükleme başladığında
+        xhr.open("POST", "/upload", true);
+        
+        // Progress event dinleyicisi ekleyelim
+        xhr.upload.addEventListener("progress", function(event) {
+            if (event.lengthComputable) {
+                const percentage = Math.round((event.loaded / event.total) * 100);
+                progressBar.style.width = percentage + "%";
+                progressBar.setAttribute("aria-valuenow", percentage);
+                uploadStatus.textContent = `Yükleme durumu: ${percentage}%`;
+            }
+        });
+
+        // Yükleme tamamlandığında
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert("Dosya yüklendi!");
+                listFiles();
+            } else {
+                alert("Yükleme başarısız.");
+            }
+            uploadBtn.innerHTML = "Yükle";
+            uploadBtn.disabled = false;
+        };
+
+        // Yükleme hatası durumunda
+        xhr.onerror = function() {
+            alert("Yükleme sırasında bir hata oluştu.");
+            uploadBtn.innerHTML = "Yükle";
+            uploadBtn.disabled = false;
+        };
+
+        // Form verisini gönderiyoruz
+        xhr.send(formData);
+    }
+
+        async function listFiles() {
+            const response = await fetch("/list");
+            const files = await response.json();
+            const fileList = document.getElementById("fileList");
+            fileList.innerHTML = "";
+
+            files.forEach(file => {
+                const li = document.createElement("li");
+                li.classList.add("file-item");
+                li.innerHTML = ` 
+                    <span>${file.name} <small>(${file.size} bytes)</small></span>
+                    <button class="btn btn-danger btn-sm" onclick="deleteFile('${file.name}')">Sil</button>
+                `;
+                fileList.appendChild(li);
+            });
+        }
+
+        async function deleteFile(filename) {
+            const response = await fetch(`/delete?name=${filename}`, { method: "DELETE" });
+            if (response.ok) {
+                alert("Dosya silindi!");
+                listFiles();
+            } else {
+                alert("Silme başarısız.");
+            }
+        }
+        function updateMemoryUsage(data) {
+            // Sketch Alanı
+            const sketchSize = data.sketch_size_mb;
+            const freeSketchSpace = data.free_sketch_space_mb;
+            const totalFlashSize = data.total_flash_size_mb;
+            const otaSpace = data.ota_space_mb;
+            const totalFsSize = data.total_fs_size_mb;
+            const usedFsSize = data.used_fs_size_mb;
+
+            // Bellek kullanımı ve progres bar güncellemeleri
+            const sketchUsedPercentage = (sketchSize / otaSpace) * 100;
+           
+            const fsUsedPercentage = (usedFsSize / totalFsSize) * 100;
+
+            // Progres barları güncelle
+            document.getElementById('sketchProgress').style.width = `${sketchUsedPercentage}%`;
+           
+            document.getElementById('fsProgress').style.width = `${fsUsedPercentage}%`;
+
+            // Yazılı veriler
+            document.getElementById('sketchSizeText').innerText = `${sketchSize.toFixed(2)} MB / ${otaSpace.toFixed(2)} MB`;
+            
+            document.getElementById('fsSizeText').innerText = `${usedFsSize.toFixed(2)} MB / ${totalFsSize.toFixed(2)} MB`;
+        }
+
+        // Örnek JSON verisini almak
+        fetch('/status')  // Backend endpoint'inden veri al
+            .then(response => response.json())
+            .then(data => updateMemoryUsage(data))
+            .catch(error => console.error('Bellek verisi alınamadı:', error));
+
+
+        // Sayfa yüklendiğinde dosya listesini getir
+        listFiles();
+    </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
